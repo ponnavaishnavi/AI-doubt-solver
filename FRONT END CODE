@@ -1,1 +1,168 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI-Powered Doubt Solver</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>🤖 AI Doubt Solver</h1>
+    <p class="subtitle">Ask any question and get instant AI-generated help!</p>
+
+    <textarea
+      id="questionInput"
+      placeholder="Type your question here..."
+    ></textarea>
+
+    <button id="askBtn">Get Solution</button>
+
+    <div id="loading" class="loading">Thinking...</div>
+
+    <div id="responseContainer" class="response-container">
+      <h2>🧠 AI Answer:</h2>
+      <p id="answerText"></p>
+    </div>
+  </div>
+
+
+
+
+* {
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+
+body {
+  background: linear-gradient(135deg, #2c3e50, #3498db);
+  color: white;
+  min-height: 100vh;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.container {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 2rem;
+  border-radius: 20px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+  max-width: 600px;
+  width: 90%;
+  text-align: center;
+  backdrop-filter: blur(10px);
+}
+
+h1 {
+  margin-bottom: 10px;
+  font-size: 2rem;
+}
+
+.subtitle {
+  font-size: 1rem;
+  margin-bottom: 20px;
+  opacity: 0.9;
+}
+
+textarea {
+  width: 100%;
+  height: 120px;
+  border: none;
+  border-radius: 10px;
+  padding: 1rem;
+  font-size: 1rem;
+  resize: none;
+  outline: none;
+}
+
+button {
+  margin-top: 15px;
+  padding: 12px 25px;
+  border: none;
+  border-radius: 10px;
+  background: #00b894;
+  color: white;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+button:hover {
+  background: #019875;
+}
+
+.loading {
+  display: none;
+  margin-top: 15px;
+  font-style: italic;
+}
+
+.response-container {
+  display: none;
+  margin-top: 20px;
+  background: rgba(255, 255, 255, 0.15);
+  padding: 1rem;
+  border-radius: 10px;
+  text-align: left;
+}
+
+footer {
+  margin-top: 30px;
+  font-size: 0.9rem;
+  color: #eee;
+  opacity: 0.8;
+}
+
+
+
+document.getElementById("askBtn").addEventListener("click", async () => {
+  const question = document.getElementById("questionInput").value.trim();
+  const loading = document.getElementById("loading");
+  const responseContainer = document.getElementById("responseContainer");
+  const answerText = document.getElementById("answerText");
+
+  if (!question) {
+    alert("Please enter a question first!");
+    return;
+  }
+
+  loading.style.display = "block";
+  responseContainer.style.display = "none";
+
+  try {
+    const response = await fetch("http://127.0.0.1:5000/solve_text", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ question }),
+    });
+
+    const data = await response.json();
+    loading.style.display = "none";
+
+    if (data.answer) {
+      answerText.textContent = data.answer;
+      responseContainer.style.display = "block";
+    } else {
+      answerText.textContent = data.error || "Something went wrong.";
+      responseContainer.style.display = "block";
+    }
+  } catch (error) {
+    loading.style.display = "none";
+    alert("Error connecting to backend. Make sure Flask is running!");
+  }
+});
+
+
+  <footer>
+    <p>Made with ❤️ by P. Vaishnavi</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
